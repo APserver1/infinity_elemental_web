@@ -1,0 +1,92 @@
+.brand-cube-stage {
+  --cube-size: 22px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  perspective: 160px;
+  flex-shrink: 0;
+}
+.brand-cube {
+  position: relative;
+  width: var(--cube-size);
+  height: var(--cube-size);
+  transform-style: preserve-3d;
+  transform: rotateX(-24deg) rotateY(-35deg);
+  animation: elemental-turn 36s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+.brand-cube-face {
+  position: absolute;
+  inset: 0;
+  border: 1px solid #101410b3;
+  box-shadow:
+    inset 1px 1px 0 #ffffff35,
+    inset -1px -1px 0 #0003;
+  backface-visibility: hidden;
+}
+.brand-cube-face.front {
+  background: linear-gradient(145deg, #a72bc1, #70138e);
+  transform: translateZ(calc(var(--cube-size) / 2));
+}
+.brand-cube-face.back {
+  background: linear-gradient(145deg, #124fee, #080899);
+  transform: rotateY(180deg) translateZ(calc(var(--cube-size) / 2));
+}
+.brand-cube-face.right {
+  background: linear-gradient(145deg, #738053, #3d542e);
+  transform: rotateY(90deg) translateZ(calc(var(--cube-size) / 2));
+}
+.brand-cube-face.left {
+  background: linear-gradient(145deg, #c7e5e6, #78c2da);
+  transform: rotateY(-90deg) translateZ(calc(var(--cube-size) / 2));
+}
+.brand-cube-face.top {
+  background: linear-gradient(145deg, #ff3153, #cc0738);
+  transform: rotateX(90deg) translateZ(calc(var(--cube-size) / 2));
+}
+.brand-cube-face.bottom {
+  background: linear-gradient(145deg, #e0cfe8, #ac84bf);
+  transform: rotateX(-90deg) translateZ(calc(var(--cube-size) / 2));
+}
+/* Rests alternate with turns; the final orientation matches the first. */
+@keyframes elemental-turn {
+  0%,
+  11% {
+    transform: rotateX(-24deg) rotateY(-35deg);
+  }
+  16.6667%,
+  27.6667% {
+    transform: rotateX(-24deg) rotateY(55deg);
+  }
+  33.3333%,
+  44.3333% {
+    transform: rotateX(-24deg) rotateY(145deg);
+  }
+  50%,
+  61% {
+    transform: rotateX(66deg) rotateY(145deg);
+  }
+  66.6667%,
+  77.6667% {
+    transform: rotateX(66deg) rotateY(235deg);
+  }
+  83.3333%,
+  94.3333% {
+    transform: rotateX(156deg) rotateY(325deg);
+  }
+  100% {
+    transform: rotateX(336deg) rotateY(325deg);
+  }
+}
+@media (max-width: 700px) {
+  .brand-cube-stage {
+    --cube-size: 19px;
+    width: 29px;
+    height: 29px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-cube {
+    animation: none;
+  }
+}

@@ -1,0 +1,12 @@
+import fs from 'node:fs';import {createClient} from '@insforge/sdk';import assert from 'node:assert/strict';
+const anonKey=fs.readFileSync('.env.local','utf8').match(/VITE_INSFORGE_ANON_KEY=(.*)/)[1].trim();const url='https://insforge.cineasta.org';
+const user=JSON.parse(fs.readFileSync('.backend/test-user.json','utf8'));const admin=createClient({baseUrl:url,anonKey,accessToken:user.accessToken});const anon=createClient({baseUrl:url,anonKey});
+const second=createClient({baseUrl:url,anonKey});const r=await second.auth.signUp({email:`ie-test-security-${Date.now()}@example.com`,password:'TestInfinity_92!',name:'Test'});assert.equal(r.error,null);const id=r.data.user.id;
+assert.equal((await second.database.from('ie_profiles').select('*').eq('id',user.id)).data.length,0);
+assert.equal((await second.database.from('ie_bug_reports').select('*').eq('user_id',user.id)).data.length,0);
+assert.ok((await second.database.from('ie_admins').insert({user_id:id})).error);
+assert.ok((await second.storage.from('ie-builds').upload(`${id}/security.txt`,new Blob(['denied']))).error);
+assert.ok((await second.storage.from('ie-bug-attachments').download(`${user.id}/test.png`)).error);
+assert.ok((await anon.storage.from('ie-bug-attachments').download(`${user.id}/test.png`)).error);
+assert.equal((await admin.storage.from('ie-bug-attachments').download(`${user.id}/test.png`)).error,null);
+console.log('PASS: profiles isolated, reports isolated, admin escalation blocked, builds restricted, bug attachments private, admin attachment access.');

@@ -1,0 +1,1 @@
+{"query":"SELECT id,email,email_verified FROM auth.users WHERE lower(email)='a.pvovapaypal@gmail.com';"}

@@ -1,0 +1,484 @@
+/* Pending is added by the observer, so unsupported browsers keep all content. */
+[data-reveal].motion-pending {
+  opacity: 0;
+}
+[data-reveal].is-revealed {
+  animation: terrain-rise 800ms cubic-bezier(0.16, 1, 0.3, 1)
+    var(--motion-delay, 0ms) backwards;
+}
+[data-reveal="left"].is-revealed {
+  animation-name: drift-left;
+}
+[data-reveal="right"].is-revealed {
+  animation-name: drift-right;
+}
+[data-reveal="card"].is-revealed,
+[data-reveal="community"].is-revealed {
+  animation-name: block-lift;
+  animation-duration: 1050ms;
+}
+[data-reveal="landscape"].is-revealed {
+  animation-name: landscape-uncover;
+  animation-duration: 1200ms;
+}
+[data-reveal="panel"].is-revealed,
+[data-reveal="release"].is-revealed {
+  animation-name: panel-build;
+  animation-duration: 950ms;
+}
+[data-reveal="banner"].is-revealed {
+  animation-name: banner-unfold;
+  animation-duration: 1100ms;
+}
+/* Each heading, description and action follows the container's entrance. */
+:is(
+    [data-reveal="intro"],
+    [data-reveal="copy"],
+    [data-reveal="panel"],
+    [data-reveal="community"]
+  ).is-revealed
+  > :not(.panel-cube) {
+  animation: detail-rise 700ms cubic-bezier(0.16, 1, 0.3, 1)
+    calc(var(--motion-delay, 0ms) + 110ms) backwards;
+}
+:is(
+    [data-reveal="intro"],
+    [data-reveal="copy"],
+    [data-reveal="panel"],
+    [data-reveal="community"]
+  ).is-revealed
+  > :nth-child(2) {
+  animation-delay: calc(var(--motion-delay, 0ms) + 190ms);
+}
+:is(
+    [data-reveal="intro"],
+    [data-reveal="copy"],
+    [data-reveal="panel"],
+    [data-reveal="community"]
+  ).is-revealed
+  > :nth-child(3) {
+  animation-delay: calc(var(--motion-delay, 0ms) + 280ms);
+}
+:is(
+    [data-reveal="copy"],
+    [data-reveal="panel"],
+    [data-reveal="community"]
+  ).is-revealed
+  > :nth-child(4) {
+  animation-delay: calc(var(--motion-delay, 0ms) + 360ms);
+}
+.feature-card.is-revealed .feature-content > * {
+  animation: detail-rise 650ms cubic-bezier(0.16, 1, 0.3, 1)
+    calc(var(--motion-delay, 0ms) + 200ms) backwards;
+}
+.feature-card.is-revealed .feature-content h3 {
+  animation-delay: calc(var(--motion-delay, 0ms) + 300ms);
+}
+.feature-card.is-revealed .feature-content p {
+  animation-delay: calc(var(--motion-delay, 0ms) + 390ms);
+}
+.feature-card.is-revealed .round-arrow {
+  animation-delay: calc(var(--motion-delay, 0ms) + 470ms);
+}
+.feature-card.is-revealed .feature-icon svg {
+  animation: icon-orient 950ms cubic-bezier(0.16, 1, 0.3, 1)
+    calc(var(--motion-delay, 0ms) + 250ms) backwards;
+}
+.landscape-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  isolation: isolate;
+}
+.landscape-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  transition: transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.game-section:nth-child(odd) [data-reveal="copy"].is-revealed {
+  animation-name: drift-left;
+}
+.game-section:nth-child(even) [data-reveal="copy"].is-revealed {
+  animation-name: drift-right;
+}
+.game-section:nth-child(odd) [data-reveal="landscape"].is-revealed {
+  animation-name: landscape-uncover-reverse;
+}
+.landscape-frame.is-revealed img,
+.gallery-grid [data-reveal].is-revealed img {
+  animation: landscape-depth 1500ms cubic-bezier(0.16, 1, 0.3, 1)
+    var(--motion-delay, 0ms) backwards;
+}
+.landscape-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    #e6bb7220 48%,
+    transparent 65%
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+.landscape-frame.is-revealed::after {
+  animation: light-pass 1500ms ease-out calc(var(--motion-delay, 0ms) + 300ms)
+    backwards;
+}
+.page-intro {
+  position: relative;
+}
+.page-intro::after {
+  content: "";
+  display: block;
+  width: min(180px, 45%);
+  height: 2px;
+  margin-top: 26px;
+  background: linear-gradient(
+    90deg,
+    var(--accent),
+    var(--sunlight),
+    transparent
+  );
+  transform-origin: left;
+}
+.page-intro.is-revealed::after {
+  animation: horizon-line 900ms cubic-bezier(0.16, 1, 0.3, 1) 300ms backwards;
+}
+.dev-panel.is-revealed .panel-cube {
+  animation: cube-arrive 1700ms cubic-bezier(0.16, 1, 0.3, 1) 200ms backwards;
+}
+.community-banner,
+.info-grid [data-reveal="community"],
+.release-card {
+  position: relative;
+  overflow: hidden;
+}
+.community-banner::after,
+.info-grid [data-reveal="community"]::after,
+.release-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent),
+    var(--sunlight),
+    transparent
+  );
+  opacity: 0;
+  transform-origin: left;
+  pointer-events: none;
+}
+.community-banner.is-revealed::after,
+.info-grid .is-revealed::after,
+.release-card.is-revealed::after {
+  animation: border-trace 1400ms cubic-bezier(0.16, 1, 0.3, 1)
+    calc(var(--motion-delay, 0ms) + 220ms) backwards;
+}
+.community-banner.is-revealed > .button {
+  animation: detail-rise 900ms cubic-bezier(0.16, 1, 0.3, 1) 300ms backwards;
+}
+.release-card.is-revealed > img {
+  animation: landscape-depth 1300ms ease-out var(--motion-delay, 0ms) backwards;
+}
+.release-card.is-revealed > div > * {
+  animation: detail-rise 750ms cubic-bezier(0.16, 1, 0.3, 1)
+    calc(var(--motion-delay, 0ms) + 180ms) backwards;
+}
+.release-card.is-revealed h2 {
+  animation-delay: calc(var(--motion-delay, 0ms) + 240ms);
+}
+.release-card.is-revealed p {
+  animation-delay: calc(var(--motion-delay, 0ms) + 310ms);
+}
+.release-card.is-revealed .text-link {
+  animation-delay: calc(var(--motion-delay, 0ms) + 380ms);
+}
+.drawer-overlay,
+.lightbox {
+  animation: veil-open 240ms ease-out;
+}
+.drawer {
+  animation: drawer-open 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.drawer nav a {
+  animation: detail-rise 450ms ease-out backwards;
+}
+.drawer nav a:nth-child(2) {
+  animation-delay: 50ms;
+}
+.drawer nav a:nth-child(3) {
+  animation-delay: 100ms;
+}
+.drawer nav a:nth-child(n + 4) {
+  animation-delay: 150ms;
+}
+.lightbox img {
+  animation: panel-build 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.text-link svg,
+.button svg,
+.round-arrow svg,
+.feature-icon svg {
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .feature-card,
+  .info-grid a {
+    transition:
+      transform 400ms,
+      border-color 400ms,
+      box-shadow 400ms;
+  }
+  .feature-card:hover {
+    transform: perspective(1100px) translateY(-6px) rotateX(1.5deg);
+    box-shadow: 0 18px 40px #0004;
+    border-color: #a8c77766;
+  }
+  .feature-card:hover .feature-icon svg {
+    transform: rotate(-12deg);
+  }
+  .feature-card:hover .round-arrow svg,
+  .text-link:hover svg {
+    transform: translate(3px, -2px);
+  }
+  .info-grid a:hover {
+    box-shadow: 0 16px 35px #0003;
+  }
+  .landscape-frame:hover img {
+    transform: scale(1.035);
+  }
+  .button:hover svg:last-child {
+    transform: translateX(3px);
+  }
+}
+@keyframes terrain-rise {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes detail-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes drift-left {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes drift-right {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes block-lift {
+  from {
+    opacity: 0;
+    transform: perspective(1100px) translateY(55px) rotateX(8deg) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes panel-build {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+    clip-path: inset(0 0 12% 0 round 10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 round 10px);
+  }
+}
+@keyframes landscape-uncover {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0 round 10px);
+    transform: translateY(12px);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 round 10px);
+    transform: none;
+  }
+}
+@keyframes landscape-depth {
+  from {
+    transform: scale(1.13);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes landscape-uncover-reverse {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 0 0 100% round 10px);
+    transform: translateY(12px);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 round 10px);
+    transform: none;
+  }
+}
+@keyframes banner-unfold {
+  from {
+    opacity: 0;
+    transform: scaleX(0.94) translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes horizon-line {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+@keyframes border-trace {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+@keyframes icon-orient {
+  from {
+    opacity: 0;
+    transform: rotate(-65deg) scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes cube-arrive {
+  from {
+    opacity: 0;
+    transform: translate(35px, 30px) rotate(40deg) scale(0.65);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-15deg);
+  }
+}
+@keyframes light-pass {
+  0% {
+    opacity: 0;
+    transform: translateX(-65%);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(65%);
+  }
+}
+@keyframes veil-open {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes drawer-open {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+/* Focus must never wait behind a decorative animation. */
+.motion-instant,
+.motion-instant *,
+.motion-instant::after {
+  animation: none !important;
+  opacity: 1;
+}
+@media (max-width: 700px) {
+  [data-reveal].is-revealed {
+    animation-duration: 750ms;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal].motion-pending {
+    opacity: 1;
+  }
+  [data-reveal],
+  [data-reveal] *,
+  [data-reveal]::after,
+  .drawer-overlay,
+  .drawer,
+  .drawer nav a,
+  .lightbox,
+  .lightbox img {
+    animation: none !important;
+    transition: none !important;
+  }
+  .feature-card:hover,
+  .info-grid a:hover,
+  .landscape-frame:hover img,
+  .text-link:hover svg,
+  .button:hover svg:last-child,
+  .feature-card:hover .feature-icon svg,
+  .feature-card:hover .round-arrow svg {
+    transform: none;
+  }
+}

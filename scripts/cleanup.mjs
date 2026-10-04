@@ -1,0 +1,9 @@
+import fs from 'node:fs';import {createAdminClient} from '@insforge/sdk';
+const admin=createAdminClient({baseUrl:'https://insforge.cineasta.org',apiKey:process.env.INSFORGE_API_KEY});
+const reports=await admin.database.from('ie_bug_reports').select('attachment_url');const releases=await admin.database.from('ie_releases').select('id,cover_url').eq('version','test-e2e');const assets=await admin.database.from('ie_release_assets').select('url').in('release_id',(releases.data||[]).map(x=>x.id));
+const urls=[...(reports.data||[]).map(x=>x.attachment_url),...(releases.data||[]).map(x=>x.cover_url),...(assets.data||[]).map(x=>x.url)].filter(Boolean);
+const ids=['667b4e8f-bd09-4ab2-aa2e-8809109ea3cf','8d56c362-27ce-44b0-824a-e79f9b278ce7'];
+for(const id of ids){urls.push(`https://insforge.cineasta.org/api/storage/buckets/ie-bug-attachments/objects/${id}%2Ftest.png`);urls.push(`https://insforge.cineasta.org/api/storage/buckets/ie-builds/objects/${id}%2Fdenied.txt`);}
+for(const url of new Set(urls)){const u=new URL(url);const match=u.pathname.match(/buckets\/([^/]+)\/objects\/(.*)/);if(match){const r=await admin.storage.from(match[1]).remove(decodeURIComponent(match[2]));if(r.error&&r.error.statusCode!==404)console.log('Storage cleanup:',r.error.message);}}
+fs.writeFileSync('.backend/cleanup.json',JSON.stringify({query:"DELETE FROM public.ie_releases WHERE version='test-e2e' AND title='Publicación de prueba temporal'; DELETE FROM public.ie_bug_reports WHERE user_id IN (SELECT id FROM auth.users WHERE email LIKE 'ie-test-%@example.com'); DELETE FROM public.ie_admins WHERE user_id IN (SELECT id FROM auth.users WHERE email LIKE 'ie-test-%@example.com'); DELETE FROM public.ie_profiles WHERE id IN (SELECT id FROM auth.users WHERE email LIKE 'ie-test-%@example.com');"}));
+console.log('Temporary storage cleaned; database cleanup prepared.');

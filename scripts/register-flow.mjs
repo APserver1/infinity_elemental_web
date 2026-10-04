@@ -1,0 +1,13 @@
+import {chromium,expect} from '@playwright/test';
+const browser=await chromium.launch();
+const page=await browser.newPage();
+await page.goto('http://localhost:5173/registro');
+await page.locator('input[name="nickname"]').fill('smoke_'+Date.now());
+await page.locator('input[name="email"]').fill(`ie-test-browser-${Date.now()}@example.com`);
+await page.locator('input[name="password"]').fill('TestInfinity_92!');
+await page.getByRole('checkbox').check();
+await page.getByRole('button',{name:'Crear mi cuenta'}).click();
+await expect(page).toHaveURL(/perfil/,{timeout:15000});
+await expect(page.locator('input[name="nickname"]')).toHaveValue(/smoke_/);
+console.log('PASS: real browser registration and nickname profile creation.');
+await browser.close();
