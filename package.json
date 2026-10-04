@@ -9,6 +9,7 @@
     "preview": "vite preview --host 0.0.0.0",
     "backend": "node scripts/backend.mjs",
     "test:smoke": "node scripts/smoke.mjs",
+    "test:access": "node scripts/test-release-access.mjs",
     "format": "prettier --write src vite.config.ts"
   },
   "dependencies": {

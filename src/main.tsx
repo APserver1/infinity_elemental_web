@@ -221,9 +221,30 @@ function Layout() {
           <Route path="/el-juego" element={<Game />} />
           <Route path="/galeria" element={<Gallery />} />
           <Route path="/comunidad" element={<Community />} />
-          <Route path="/descargas" element={<Releases downloads />} />
-          <Route path="/versiones" element={<Releases />} />
-          <Route path="/versiones/:id" element={<ReleaseDetail />} />
+          <Route
+            path="/descargas"
+            element={
+              <ReleaseAccess purpose="download">
+                <Releases downloads />
+              </ReleaseAccess>
+            }
+          />
+          <Route
+            path="/versiones"
+            element={
+              <ReleaseAccess purpose="versions">
+                <Releases />
+              </ReleaseAccess>
+            }
+          />
+          <Route
+            path="/versiones/:id"
+            element={
+              <ReleaseAccess purpose="detail">
+                <ReleaseDetail />
+              </ReleaseAccess>
+            }
+          />
           <Route path="/login" element={<AuthPage />} />
           <Route path="/registro" element={<AuthPage register />} />
           <Route path="/recuperar" element={<Recovery />} />
@@ -932,6 +953,60 @@ function ReleaseDetail() {
     </section>
   );
 }
+function ReleaseAccess({
+  children,
+  purpose,
+}: {
+  children: React.ReactNode;
+  purpose: "versions" | "download" | "detail";
+}) {
+  const auth = useAuth();
+  const location = useLocation();
+  if (auth.loading) return <Loading />;
+  if (auth.user) return <>{children}</>;
+  const title =
+    purpose === "versions"
+      ? "Inicia sesión para ver las versiones."
+      : purpose === "detail"
+        ? "Inicia sesión para ver y descargar esta versión."
+        : "Inicia sesión para descargar el juego.";
+  const returnTo = location.pathname + location.search + location.hash;
+  return (
+    <section className="page narrow">
+      <PageIntro label="TU PRÓXIMA AVENTURA" title={title}>
+        Necesitas una cuenta y una sesión activa para acceder a las versiones
+        del juego y sus descargas.
+      </PageIntro>
+      <div
+        className="panel release-access"
+        aria-labelledby="release-access-title"
+        data-reveal="panel"
+      >
+        <Shield size={32} aria-hidden="true" />
+        <h2 id="release-access-title">Tu aventura empieza con una cuenta.</h2>
+        <p>
+          Inicia sesión para continuar. Si todavía no tienes cuenta, puedes
+          registrarte aquí.
+        </p>
+        <div className="release-access-actions">
+          <Link className="button" to="/login" state={{ returnTo }}>
+            <UserRound size={18} /> Iniciar sesión <ArrowRight size={18} />
+          </Link>
+          <Link className="button glass" to="/registro" state={{ returnTo }}>
+            Crear una cuenta
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+function authDestination(state: unknown): string {
+  const path = (state as { returnTo?: unknown } | null)?.returnTo;
+  return typeof path === "string" &&
+    /^\/(?:versiones|descargas)(?:[/?#]|$)/.test(path)
+    ? path
+    : "/perfil";
+}
 function Protected({
   children,
   admin = false,
@@ -965,6 +1040,8 @@ function Protected({
 function AuthPage({ register = false }: { register?: boolean }) {
   const auth = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const destination = authDestination(location.state);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(
     new URLSearchParams(window.location.search).get("insforge_status") ===
@@ -1002,15 +1079,15 @@ function AuthPage({ register = false }: { register?: boolean }) {
             }),
           );
           await auth.refresh();
-          navigate("/perfil");
+          navigate(destination);
         } else {
           sessionStorage.setItem("ie_pending_email", email);
-          navigate("/verificar");
+          navigate("/verificar", { state: { returnTo: destination } });
         }
       } else {
         check(await backend.auth.signInWithPassword({ email, password }));
         await auth.refresh();
-        navigate("/perfil");
+        navigate(destination);
       }
     } catch (e) {
       setError(message(e));
@@ -1102,7 +1179,10 @@ function AuthPage({ register = false }: { register?: boolean }) {
         )}
         <p className="auth-switch">
           {register ? "¿Ya tienes cuenta?" : "¿Aún no tienes cuenta?"}{" "}
-          <Link to={register ? "/login" : "/registro"}>
+          <Link
+            to={register ? "/login" : "/registro"}
+            state={{ returnTo: destination }}
+          >
             {register ? "Inicia sesión" : "Regístrate"}
           </Link>
         </p>
@@ -1113,6 +1193,7 @@ function AuthPage({ register = false }: { register?: boolean }) {
 function Verification() {
   const auth = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [busy, setBusy] = useState(false);
@@ -1130,7 +1211,7 @@ function Verification() {
       );
       sessionStorage.removeItem("ie_pending_email");
       await auth.refresh();
-      navigate("/perfil");
+      navigate(authDestination(location.state));
     } catch (e) {
       setError(message(e));
     } finally {
